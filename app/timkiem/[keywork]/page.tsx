@@ -5,7 +5,10 @@ import SearchSection from "@/components/SearchSection";
 async function getData(
     keywork: string,
 ): Promise<ResponseFlimType> {
-    const res = await fetch(`${process.env.VIDEO_SOURCE}/api/films/search?keyword=${keywork}`)
+    const res = await fetch(`${process.env.VIDEO_SOURCE}/api/films/search?keyword=${keywork}`,
+        {
+            cache: "no-cache",
+        })
     if (!res.ok) {
         throw new Error('Failed to fetch data')
     }

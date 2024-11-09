@@ -38,7 +38,7 @@ export const Navbar = () => {
           <Input
               aria-label="Search"
               labelPlacement="outside"
-              placeholder="Search..."
+              placeholder="Tìm kiếm..."
               type="search"
               value={value}
               onValueChange={(value) => setValue(value)}

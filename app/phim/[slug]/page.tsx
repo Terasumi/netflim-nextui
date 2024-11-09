@@ -4,9 +4,7 @@ import MovieSection from "@/components/MovieSection";
 async function getData(slug: string) {
     const res = await fetch(`${process.env.VIDEO_SOURCE}/api/film/${slug}`,
         {
-            next: {
-                revalidate: 60*60*24*7, // 1 week
-            }
+            cache: "no-cache",
         }
     )
     if (!res.ok) {

@@ -1,8 +1,12 @@
 'use client'
 
-import {useState} from 'react'
+import {useRef, useState} from 'react'
 import Image from 'next/image'
-import {EpisodeItem, MovieResponse} from "@/types";
+import {MovieResponse} from "@/types";
+import {Tab, Tabs} from "@nextui-org/tabs";
+import { RadioGroup} from "@nextui-org/radio";
+import {cn} from '@nextui-org/react';
+import SizeRadioItem from "@/components/CustomRadio";
 
 interface MoviePageProps {
     movieData: MovieResponse
@@ -10,7 +14,21 @@ interface MoviePageProps {
 
 export default function MovieSection({movieData}: MoviePageProps) {
     const {movie} = movieData
-    const [selectedEpisode, setSelectedEpisode] = useState<EpisodeItem | null>(null)
+    const [selectedEpisode, setSelectedEpisode] = useState<string>()
+    const videoSectionRef = useRef(null)
+
+    const handleEpisodeChange = (value: string) => {
+        setSelectedEpisode(value)
+
+        // Scroll to the video section
+        if (videoSectionRef.current) {
+            setTimeout(() => {
+                // @ts-ignore
+                videoSectionRef.current.scrollIntoView({behavior: 'smooth', block: 'start'})
+            }, 100) // Small delay to ensure the video has rendered
+        }
+    }
+
 
     const renderCategories = () => {
         return Object.entries(movie.category).map(([key, value]) => (
@@ -21,29 +39,6 @@ export default function MovieSection({movieData}: MoviePageProps) {
                         <span key={item.id} className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
               {item.name}
             </span>
-                    ))}
-                </div>
-            </div>
-        ))
-    }
-
-    const renderEpisodes = () => {
-        return movie.episodes.map((episode) => (
-            <div key={episode.server_name} className="mb-6">
-                <h3 className="text-lg font-semibold mb-2">{episode.server_name}</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                    {episode.items.map((item) => (
-                        <button
-                            key={item.slug}
-                            onClick={() => setSelectedEpisode(item)}
-                            className={`p-2 text-sm rounded ${
-                                selectedEpisode?.slug === item.slug
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-secondary hover:bg-secondary/80'
-                            }`}
-                        >
-                            {item.name}
-                        </button>
                     ))}
                 </div>
             </div>
@@ -82,28 +77,47 @@ export default function MovieSection({movieData}: MoviePageProps) {
                 </div>
             </div>
 
-            <div className="mt-12">
-                <h2 className="text-2xl font-bold mb-4">Các tập phim</h2>
-                {renderEpisodes()}
+
+            <div className="flex w-full flex-col">
+                <Tabs aria-label="Episode">
+                    {movie.episodes.map((episode) => (
+                        <Tab key={episode.server_name} title={episode.server_name}>
+                            <RadioGroup
+                                classNames={{
+                                    base: cn("", "max-w-fit"),
+                                    wrapper: cn("", "gap-3"),
+                                }}
+                                defaultValue="1"
+                                orientation="horizontal"
+                                size="lg"
+                                value={selectedEpisode}
+                                onValueChange={handleEpisodeChange}
+                            >
+                                {episode.items.map((item, index) => (
+                                    <SizeRadioItem key={item.slug} value={item.embed} label={item.name}/>
+                                ))}
+                            </RadioGroup>
+                        </Tab>
+                    ))}
+                </Tabs>
             </div>
 
-            {selectedEpisode && (
-                <div className="mt-8">
+            <div ref={videoSectionRef} className="mt-8">
+
+                {selectedEpisode && (
                     <div className="mt-8">
-                        <h2 className="text-2xl font-bold mb-4">Bấm để xem tập {selectedEpisode.name}</h2>
                         <div className="aspect-video">
                             <iframe
-                                key={selectedEpisode.slug}
-                                src={selectedEpisode.embed}
+                                src={selectedEpisode}
                                 allowFullScreen
+
                                 className="w-full h-full rounded-lg"
-                                title={`Watch ${selectedEpisode.name}`}
+                                title={`Xem ${movie.name}}`}
                             />
                         </div>
                     </div>
-
-                </div>
-            )}
+                )}
+            </div>
         </div>
     )
 }
