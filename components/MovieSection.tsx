@@ -67,14 +67,14 @@ export default function MovieSection({movieData}: MoviePageProps) {
                     <h2 className="text-xl text-gray-600 dark:text-gray-400 mb-4">{movie.original_name}</h2>
                     <div className="grid grid-cols-2 gap-4 mb-6">
                         <div>
-                            <p><strong>Director:</strong> {movie.director}</p>
-                            <p><strong>Cast:</strong> {movie.casts}</p>
-                            <p><strong>Language:</strong> {movie.language}</p>
+                            <p><strong>Đạo diễn:</strong> {movie.director}</p>
+                            <p><strong>Diễn viên:</strong> {movie.casts}</p>
+                            <p><strong>Ngôn ngữ:</strong> {movie.language}</p>
                         </div>
                         <div>
-                            <p><strong>Quality:</strong> {movie.quality}</p>
-                            <p><strong>Duration:</strong> {movie.time}</p>
-                            <p><strong>Episodes:</strong> {movie.current_episode} / {movie.total_episodes}</p>
+                            <p><strong>Chất lượng:</strong> {movie.quality}</p>
+                            <p><strong>Thời lượng:</strong> {movie.time}</p>
+                            <p><strong>Số tập:</strong> {movie.current_episode} / {movie.total_episodes}</p>
                         </div>
                     </div>
                     <p className="mb-6">{movie.description}</p>
@@ -83,14 +83,14 @@ export default function MovieSection({movieData}: MoviePageProps) {
             </div>
 
             <div className="mt-12">
-                <h2 className="text-2xl font-bold mb-4">Episodes</h2>
+                <h2 className="text-2xl font-bold mb-4">Các tập phim</h2>
                 {renderEpisodes()}
             </div>
 
             {selectedEpisode && (
                 <div className="mt-8">
                     <div className="mt-8">
-                        <h2 className="text-2xl font-bold mb-4">Watch {selectedEpisode.name}</h2>
+                        <h2 className="text-2xl font-bold mb-4">Bấm để xem tập {selectedEpisode.name}</h2>
                         <div className="aspect-video">
                             <iframe
                                 key={selectedEpisode.slug}

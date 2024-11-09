@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -25,27 +27,34 @@ import {
   SearchIcon,
   Logo,
 } from "@/components/icons";
+import {Spacer} from "@nextui-org/spacer";
+import React from "react";
 
 export const Navbar = () => {
+    const [value, setValue] = React.useState("");
+
   const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
+      <div className={"flex flex-row"}>
+          <Input
+              aria-label="Search"
+              labelPlacement="outside"
+              placeholder="Search..."
+              type="search"
+              value={value}
+              onValueChange={(value) => setValue(value)}
+
+          />
+          <Spacer x={1} />
+            <Button
+                as={Link}
+                href={`/timkiem/${value}`}
+                color={"primary"}
+                isIconOnly={true}
+            >
+                <SearchIcon />
+            </Button>
+      </div>
+
   );
 
   return (

@@ -85,3 +85,9 @@ export interface MovieResponse {
   status: string;
   movie: Movie;
 }
+
+export interface SearchFlimResponse {
+  status: string;
+  paginate: Paginate;
+  items: Item[];
+}
