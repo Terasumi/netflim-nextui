@@ -48,8 +48,8 @@ export default function HeroSection({currentPage, apiLink}: HeroSectionProps) {
                                 fill={true}
                             />
                             <CardFooter
-                                className="flex items-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
-                                <strong className="text-xs text-center text-white/80">{item.name}.</strong>
+                                className="flex items-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10 bg-black/70">                                <strong
+                                    className="w-full text-xs text-center text-white  p-1 rounded">{item.name}</strong>
                             </CardFooter>
                         </Card>
                     ))}

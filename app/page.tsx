@@ -3,8 +3,6 @@
 import {useState} from 'react'
 import HeroSection from "@/components/HeroSection"
 import {Pagination} from "@nextui-org/pagination"
-import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/dropdown";
-import {Button} from "@nextui-org/button";
 import {Select, SelectItem} from "@nextui-org/select";
 
 //https://phim.nguonc.com/api/films/danh-sach/${slug}?page=${page}
@@ -209,7 +207,7 @@ export default function Page() {
                     label="Thể loại"
                     className="max-w-full"
                     onSelectionChange={(value) => {
-                        const item = theLoai.find((item) => item.typeName === value)
+                        const item = theLoai.find((item) => item.typeName === value.currentKey)
                         if (item) {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.typeName)
@@ -229,7 +227,7 @@ export default function Page() {
                     label="Danh mục"
                     className="max-w-full"
                     onSelectionChange={(value) => {
-                        const item = danhMuc.find((item) => item.danhMucName === value)
+                        const item = danhMuc.find((item) => item.danhMucName === value.currentKey)
                         if (item) {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.danhMucName)
@@ -249,7 +247,7 @@ export default function Page() {
                     label="Quốc gia"
                     className="max-w-full"
                     onSelectionChange={(value) => {
-                        const item = quocGia.find((item) => item.quocGiaName === value)
+                        const item = quocGia.find((item) => item.quocGiaName === value.currentKey)
                         if (item) {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.quocGiaName)
@@ -269,7 +267,7 @@ export default function Page() {
                     label="Năm phát hành"
                     className="max-w-full"
                     onSelectionChange={(value) => {
-                        const item = namPhatHanh.find((item) => item.namPhatHanhName === value)
+                        const item = namPhatHanh.find((item) => item.namPhatHanhName === value.currentKey)
                         if (item) {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.namPhatHanhName)
