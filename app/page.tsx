@@ -1,87 +1,299 @@
 "use client"
 
-import {Suspense} from 'react'
-import {useSearchParams} from 'next/navigation'
+import {useState} from 'react'
 import HeroSection from "@/components/HeroSection"
-import {ResponseFlimType} from "@/types"
-import {Spacer} from "@nextui-org/spacer"
 import {Pagination} from "@nextui-org/pagination"
-import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem} from "@nextui-org/dropdown"
-import {Button} from "@nextui-org/button"
-import HeroSectionSkeleton from "@/components/HeroSectionSkeleton";
+import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/dropdown";
+import {Button} from "@nextui-org/button";
+import {Select, SelectItem} from "@nextui-org/select";
 
-async function getData(page: number): Promise<ResponseFlimType> {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_VIDEO_SOURCE}/api/films/phim-moi-cap-nhat?page=${page}`, {
-        next: {revalidate: 60 * 60}, // Revalidate every 1 hour
-    })
-    if (!res.ok) {
-        throw new Error('Failed to fetch data')
+//https://phim.nguonc.com/api/films/danh-sach/${slug}?page=${page}
+const danhMuc = [
+    {
+        danhMucName: "Phim mới cập nhật",
+        apiLink: "api/films/phim-moi-cap-nhat"
+    },
+    {
+        danhMucName: "TV shows",
+        apiLink: "api/films/danh-sach/tv-shows"
+    },
+    {
+        danhMucName: "Phim bộ",
+        apiLink: "api/films/danh-sach/phim-bo"
+    },
+    {
+        danhMucName: "Phim đang chiếu",
+        apiLink: "api/films/danh-sach/phim-dang-chieu"
+    },
+]
+///api/films/the-loai/${slug}?page=${page}
+const theLoai = [
+    {
+        typeName: "Hành động",
+        apiLink: "api/films/the-loai/hanh-dong"
+    },
+    {
+        typeName: "Phiêu lưu",
+        apiLink: "api/films/the-loai/phieu-luu"
+    },
+    {
+        typeName: "Hoạt hình",
+        apiLink: "api/films/the-loai/hoat-hinh"
+    },
+    {
+        typeName: "Phim hài",
+        apiLink: "api/films/the-loai/phim-hai"
+    },
+    {
+        typeName: "Hình sự",
+        apiLink: "api/films/the-loai/hinh-su"
+    },
+    {
+        typeName: "Tài liệu",
+        apiLink: "api/films/the-loai/tai-lieu"
+    },
+    {
+        typeName: "Chính kịch",
+        apiLink: "api/films/the-loai/chinh-kich"
+    },
+    {
+        typeName: "Gia đình",
+        apiLink: "api/films/the-loai/gia-dinh"
+    },
+    {
+        typeName: "Giả tưởng",
+        apiLink: "api/films/the-loai/gia-tuong"
+    },
+    {
+        typeName: "Lịch sử",
+        apiLink: "api/films/the-loai/lich-su"
+    },
+    {
+        typeName: "Kinh dị",
+        apiLink: "api/films/the-loai/kinh-di"
+    },
+    {
+        typeName: "Phim nhạc",
+        apiLink: "api/films/the-loai/phim-nhac"
+    },
+    {
+        typeName: "Bí ẩn",
+        apiLink: "api/films/the-loai/bi-an"
+    },
+    {
+        typeName: "Lãng mạng",
+        apiLink: "api/films/the-loai/lang-man"
+    },
+    {
+        typeName: "Khoa học viễn tưởng",
+        apiLink: "api/films/the-loai/khoa-hoc-vien-tuong"
+    },
+    {
+        typeName: "Gay cấn",
+        apiLink: "api/films/the-loai/gay-can"
+    },
+    {
+        typeName: "Chiến tranh",
+        apiLink: "api/films/the-loai/chien-tranh"
+    },
+    {
+        typeName: "Miền Tây",
+        apiLink: "api/films/the-loai/mien-tay"
+    },
+    {
+        typeName: "Cổ trang",
+        apiLink: "api/films/the-loai/co-trang"
+    },
+    {
+        typeName: "Tâm lý",
+        apiLink: "api/films/the-loai/tam-ly"
+    },
+    {
+        typeName: "Phim 18+",
+        apiLink: "api/films/the-loai/phim-18"
+    },
+    {
+        typeName: "Tình cảm",
+        apiLink: "api/films/the-loai/tinh-cam"
+    },
+]
+
+//https://phim.nguonc.com/api/films/quoc-gia/${slug}?page=${page}
+const quocGia = [
+    {
+        quocGiaName: "Âu Mỹ",
+        apiLink: "api/films/quoc-gia/au-my"
+    },
+    {
+        quocGiaName: "Anh",
+        apiLink: "api/films/quoc-gia/anh"
+    },
+    {
+        quocGiaName: "Trung Quốc",
+        apiLink: "api/films/quoc-gia/trung-quoc"
+    },
+    {
+        quocGiaName: "Indonesia",
+        apiLink: "api/films/quoc-gia/indonesia"
+    },
+    {
+        quocGiaName: "Việt Nam",
+        apiLink: "api/films/quoc-gia/viet-nam"
+    },
+    {
+        quocGiaName: "Pháp",
+        apiLink: "api/films/quoc-gia/phap"
+    },
+    {
+        quocGiaName: "Hồng Kông",
+        apiLink: "api/films/quoc-gia/hong-kong"
+    },
+    {
+        quocGiaName: "Hàn Quốc",
+        apiLink: "api/films/quoc-gia/han-quoc"
+    },
+    {
+        quocGiaName: "Nhật Bản",
+        apiLink: "api/films/quoc-gia/nhat-ban"
+    },
+    {
+        quocGiaName: "Thái Lan",
+        apiLink: "api/films/quoc-gia/thai-lan"
+    },
+    {
+        quocGiaName: "Đài Loan",
+        apiLink: "api/films/quoc-gia/dai-loan"
+    },
+    {
+        quocGiaName: "Nga",
+        apiLink: "api/films/quoc-gia/nga"
+    },
+    {
+        quocGiaName: "Hà Lan",
+        apiLink: "api/films/quoc-gia/ha-lan"
+    },
+    {
+        quocGiaName: "Philippines",
+        apiLink: "api/films/quoc-gia/philippines"
+    },
+    {
+        quocGiaName: "Ấn Độ",
+        apiLink: "api/films/quoc-gia/an-do"
+    },
+    {
+        quocGiaName: "Quốc gia khác",
+        apiLink: "api/films/quoc-gia/quoc-gia-khac"
     }
-    return res.json()
-}
+];
 
-async function PageContent() {
-    const searchParams = useSearchParams()
-    const currentPage = Number(searchParams.get('page')) || 1
-    const data = await getData(currentPage)
+//https://phim.nguonc.com/api/films/nam-phat-hanh/${slug}?page=${page}
+const namPhatHanh = Array.from({length: 2026 - 1990 + 1}, (_, i) => ({
+    namPhatHanhName: (2026 - i).toString(),
+    apiLink: `api/films/nam-phat-hanh/${2026 - i}`
+}));
 
-    return (
-        <div>
-            <HeroSection items={data.items}/>
-            <Spacer y={4}/>
-            <Pagination
-                page={currentPage}
-                total={data.paginate.total_page}
-                onChange={(newPage) => {
-                    const query = newPage === 1 ? '' : `?page=${newPage}`
-                    window.history.pushState(null, '', `${window.location.pathname}${query}`)
-                }}
-            />
-        </div>
-    )
-}
-
-function PageContentSkeleton() {
-    return (
-        <div>
-            <HeroSectionSkeleton/>
-            <Spacer y={4}/>
-            <Pagination
-                page={1}
-                total={100}
-            />
-        </div>
-    )
-}
-
-function FilterSection() {
-    return (
-        <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex gap-3">
-                {['Thể loại', 'Quốc gia', 'Năm'].map((label) => (
-                    <Dropdown key={label}>
-                        <DropdownTrigger>
-                            <Button variant="flat" size={"lg"}>
-                                {label}
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu aria-label={`${label} options`}>
-                            <DropdownItem key="placeholder">Đang hoàn thiện chức năng</DropdownItem>
-                        </DropdownMenu>
-                    </Dropdown>
-                ))}
-            </div>
-        </div>
-    )
-}
 
 export default function Page() {
+    const [currentPage, setCurrentPage] = useState(1)
+    const [currentSelected, setCurrentSelected] = useState<string>("Phim mới cập nhật")
+    const [apiLink, setApiLink] = useState<string>("api/films/phim-moi-cap-nhat")
+
     return (
         <div className="flex flex-col gap-4">
-            <FilterSection/>
-            <Suspense fallback={<PageContentSkeleton/>}>
-                <PageContent/>
-            </Suspense>
+            <strong className="block text-center text-lg">
+                Lựa chọn hiện tại: <span className="font-bold text-blue-500">{currentSelected}</span>
+            </strong>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Select
+                    size="sm"
+                    label="Thể loại"
+                    className="max-w-full"
+                    onSelectionChange={(value) => {
+                        const item = theLoai.find((item) => item.typeName === value)
+                        if (item) {
+                            setApiLink(item.apiLink)
+                            setCurrentSelected(item.typeName)
+                            setCurrentPage(1)
+                        }
+                    }}
+                >
+                    {theLoai.map((item) => (
+                        <SelectItem key={item.typeName} value={item.typeName}>
+                            {item.typeName}
+                        </SelectItem>
+                    ))}
+                </Select>
+
+                <Select
+                    size="sm"
+                    label="Danh mục"
+                    className="max-w-full"
+                    onSelectionChange={(value) => {
+                        const item = danhMuc.find((item) => item.danhMucName === value)
+                        if (item) {
+                            setApiLink(item.apiLink)
+                            setCurrentSelected(item.danhMucName)
+                            setCurrentPage(1)
+                        }
+                    }}
+                >
+                    {danhMuc.map((item) => (
+                        <SelectItem key={item.danhMucName} value={item.danhMucName}>
+                            {item.danhMucName}
+                        </SelectItem>
+                    ))}
+                </Select>
+
+                <Select
+                    size="sm"
+                    label="Quốc gia"
+                    className="max-w-full"
+                    onSelectionChange={(value) => {
+                        const item = quocGia.find((item) => item.quocGiaName === value)
+                        if (item) {
+                            setApiLink(item.apiLink)
+                            setCurrentSelected(item.quocGiaName)
+                            setCurrentPage(1)
+                        }
+                    }}
+                >
+                    {quocGia.map((item) => (
+                        <SelectItem key={item.quocGiaName} value={item.quocGiaName}>
+                            {item.quocGiaName}
+                        </SelectItem>
+                    ))}
+                </Select>
+
+                <Select
+                    size="sm"
+                    label="Năm phát hành"
+                    className="max-w-full"
+                    onSelectionChange={(value) => {
+                        const item = namPhatHanh.find((item) => item.namPhatHanhName === value)
+                        if (item) {
+                            setApiLink(item.apiLink)
+                            setCurrentSelected(item.namPhatHanhName)
+                            setCurrentPage(1)
+                        }
+                    }}
+                >
+                    {namPhatHanh.map((item) => (
+                        <SelectItem key={item.namPhatHanhName} value={item.namPhatHanhName}>
+                            {item.namPhatHanhName}
+                        </SelectItem>
+                    ))}
+                </Select>
+            </div>
+            <div className={"flex flex-col items-center"}>
+                <HeroSection currentPage={currentPage} apiLink={apiLink}/>
+                <Pagination
+                    page={currentPage}
+                    total={100}
+                    onChange={(newPage) => {
+                        setCurrentPage(newPage)
+                    }}
+                />
+            </div>
         </div>
     )
 }

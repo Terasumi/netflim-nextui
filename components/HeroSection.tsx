@@ -1,45 +1,57 @@
 import {Item} from "@/types";
-import Link from "next/link";
 import React from "react";
+import {Card, CardFooter, CardBody} from "@nextui-org/card";
 import NextImage from "next/image";
+import {useRouter} from "next/navigation";
+
 
 interface HeroSectionProps {
-    items: Item[]
+    currentPage: number
+    apiLink: string
 }
 
-export default function HeroSection({items}: HeroSectionProps) {
+export default function HeroSection({currentPage, apiLink}: HeroSectionProps) {
+    const router = useRouter()
+
+    //fetch data from api
+    console.log("Current Api Link: ", apiLink)
+    const [items, setItems] = React.useState<Item[]>([])
+    console.log(`${process.env.NEXT_PUBLIC_VIDEO_SOURCE}/${apiLink}?page=${currentPage}`)
+    React.useEffect(() => {
+        fetch(`${process.env.NEXT_PUBLIC_VIDEO_SOURCE}/${apiLink}?page=${currentPage}`)
+            .then((res) => res.json())
+            .then((data) => {
+                setItems(data.items)
+            })
+    }, [currentPage, apiLink])
+
+
     return (
         <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
             <div className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                     {items.map((item) => (
-                        <Link href={`/phim/${item.slug}`} key={item.slug} className="group">
-                            <div
-                                className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-transform duration-300 ease-in-out group-hover:scale-105">
-                                <div className="relative aspect-[2/3]">
-                                    <NextImage
-                                        src={item.thumb_url}
-                                        alt={item.name}
-                                        fill={true}
-                                        objectFit="cover"
-                                        className="transition-opacity duration-300 group-hover:opacity-75"
-                                    />
-                                    <div
-                                        className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                                        <h2 className="text-white text-lg font-semibold line-clamp-2">{item.name}</h2>
-                                        <p className="text-gray-300 text-sm">{item.original_name}</p>
-                                    </div>
-                                </div>
-                                <div className="p-4">
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                        Episodes: {item.current_episode} / {item.total_episodes}
-                                    </p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                        Quality: {item.quality} | Language: {item.language}
-                                    </p>
-                                </div>
-                            </div>
-                        </Link>
+                        <Card
+                            isPressable={true}
+                            key={item.slug}
+                            isFooterBlurred
+                            radius="lg"
+                            className="border-none h-[500px] w-[333px] sm:h-[400px] sm:w-[267px] md:h-[350px] md:w-[233px] lg:h-[300px] lg:w-[200px]"
+                            onPress={() => {
+                                router.push(`/phim/${item.slug}`)
+                            }}
+                        >
+                            <NextImage
+                                alt="Woman listing to music"
+                                className="object-cover"
+                                src={item.thumb_url}
+                                fill={true}
+                            />
+                            <CardFooter
+                                className="flex items-center before:bg-white/10 border-white/20 border-1 overflow-hidden py-1 absolute before:rounded-xl rounded-large bottom-1 w-[calc(100%_-_8px)] shadow-small ml-1 z-10">
+                                <strong className="text-xs text-center text-white/80">{item.name}.</strong>
+                            </CardFooter>
+                        </Card>
                     ))}
                 </div>
             </div>
