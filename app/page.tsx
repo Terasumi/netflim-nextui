@@ -1,203 +1,39 @@
 "use client"
 
-import {useState} from 'react'
+import {useRef, useState} from 'react'
 import HeroSection from "@/components/HeroSection"
 import {Pagination} from "@nextui-org/pagination"
 import {Select, SelectItem} from "@nextui-org/select";
-
-//https://phim.nguonc.com/api/films/danh-sach/${slug}?page=${page}
-const danhMuc = [
-    {
-        danhMucName: "Phim mới cập nhật",
-        apiLink: "api/films/phim-moi-cap-nhat"
-    },
-    {
-        danhMucName: "TV shows",
-        apiLink: "api/films/danh-sach/tv-shows"
-    },
-    {
-        danhMucName: "Phim bộ",
-        apiLink: "api/films/danh-sach/phim-bo"
-    },
-    {
-        danhMucName: "Phim đang chiếu",
-        apiLink: "api/films/danh-sach/phim-dang-chieu"
-    },
-]
-///api/films/the-loai/${slug}?page=${page}
-const theLoai = [
-    {
-        typeName: "Hành động",
-        apiLink: "api/films/the-loai/hanh-dong"
-    },
-    {
-        typeName: "Phiêu lưu",
-        apiLink: "api/films/the-loai/phieu-luu"
-    },
-    {
-        typeName: "Hoạt hình",
-        apiLink: "api/films/the-loai/hoat-hinh"
-    },
-    {
-        typeName: "Phim hài",
-        apiLink: "api/films/the-loai/phim-hai"
-    },
-    {
-        typeName: "Hình sự",
-        apiLink: "api/films/the-loai/hinh-su"
-    },
-    {
-        typeName: "Tài liệu",
-        apiLink: "api/films/the-loai/tai-lieu"
-    },
-    {
-        typeName: "Chính kịch",
-        apiLink: "api/films/the-loai/chinh-kich"
-    },
-    {
-        typeName: "Gia đình",
-        apiLink: "api/films/the-loai/gia-dinh"
-    },
-    {
-        typeName: "Giả tưởng",
-        apiLink: "api/films/the-loai/gia-tuong"
-    },
-    {
-        typeName: "Lịch sử",
-        apiLink: "api/films/the-loai/lich-su"
-    },
-    {
-        typeName: "Kinh dị",
-        apiLink: "api/films/the-loai/kinh-di"
-    },
-    {
-        typeName: "Phim nhạc",
-        apiLink: "api/films/the-loai/phim-nhac"
-    },
-    {
-        typeName: "Bí ẩn",
-        apiLink: "api/films/the-loai/bi-an"
-    },
-    {
-        typeName: "Lãng mạng",
-        apiLink: "api/films/the-loai/lang-man"
-    },
-    {
-        typeName: "Khoa học viễn tưởng",
-        apiLink: "api/films/the-loai/khoa-hoc-vien-tuong"
-    },
-    {
-        typeName: "Gay cấn",
-        apiLink: "api/films/the-loai/gay-can"
-    },
-    {
-        typeName: "Chiến tranh",
-        apiLink: "api/films/the-loai/chien-tranh"
-    },
-    {
-        typeName: "Miền Tây",
-        apiLink: "api/films/the-loai/mien-tay"
-    },
-    {
-        typeName: "Cổ trang",
-        apiLink: "api/films/the-loai/co-trang"
-    },
-    {
-        typeName: "Tâm lý",
-        apiLink: "api/films/the-loai/tam-ly"
-    },
-    {
-        typeName: "Phim 18+",
-        apiLink: "api/films/the-loai/phim-18"
-    },
-    {
-        typeName: "Tình cảm",
-        apiLink: "api/films/the-loai/tinh-cam"
-    },
-]
-
-//https://phim.nguonc.com/api/films/quoc-gia/${slug}?page=${page}
-const quocGia = [
-    {
-        quocGiaName: "Âu Mỹ",
-        apiLink: "api/films/quoc-gia/au-my"
-    },
-    {
-        quocGiaName: "Anh",
-        apiLink: "api/films/quoc-gia/anh"
-    },
-    {
-        quocGiaName: "Trung Quốc",
-        apiLink: "api/films/quoc-gia/trung-quoc"
-    },
-    {
-        quocGiaName: "Indonesia",
-        apiLink: "api/films/quoc-gia/indonesia"
-    },
-    {
-        quocGiaName: "Việt Nam",
-        apiLink: "api/films/quoc-gia/viet-nam"
-    },
-    {
-        quocGiaName: "Pháp",
-        apiLink: "api/films/quoc-gia/phap"
-    },
-    {
-        quocGiaName: "Hồng Kông",
-        apiLink: "api/films/quoc-gia/hong-kong"
-    },
-    {
-        quocGiaName: "Hàn Quốc",
-        apiLink: "api/films/quoc-gia/han-quoc"
-    },
-    {
-        quocGiaName: "Nhật Bản",
-        apiLink: "api/films/quoc-gia/nhat-ban"
-    },
-    {
-        quocGiaName: "Thái Lan",
-        apiLink: "api/films/quoc-gia/thai-lan"
-    },
-    {
-        quocGiaName: "Đài Loan",
-        apiLink: "api/films/quoc-gia/dai-loan"
-    },
-    {
-        quocGiaName: "Nga",
-        apiLink: "api/films/quoc-gia/nga"
-    },
-    {
-        quocGiaName: "Hà Lan",
-        apiLink: "api/films/quoc-gia/ha-lan"
-    },
-    {
-        quocGiaName: "Philippines",
-        apiLink: "api/films/quoc-gia/philippines"
-    },
-    {
-        quocGiaName: "Ấn Độ",
-        apiLink: "api/films/quoc-gia/an-do"
-    },
-    {
-        quocGiaName: "Quốc gia khác",
-        apiLink: "api/films/quoc-gia/quoc-gia-khac"
-    }
-];
-
-//https://phim.nguonc.com/api/films/nam-phat-hanh/${slug}?page=${page}
-const namPhatHanh = Array.from({length: 2026 - 1990 + 1}, (_, i) => ({
-    namPhatHanhName: (2026 - i).toString(),
-    apiLink: `api/films/nam-phat-hanh/${2026 - i}`
-}));
+import {danhMuc, namPhatHanh, quocGia, theLoai} from "@/data/selects";
+import CarouselSection from '@/components/CarouselSection';
 
 
 export default function Page() {
+    const MovieRef = useRef(null)
     const [currentPage, setCurrentPage] = useState(1)
-    const [currentSelected, setCurrentSelected] = useState<string>("Phim mới cập nhật")
-    const [apiLink, setApiLink] = useState<string>("api/films/phim-moi-cap-nhat")
+    const [currentSelected, setCurrentSelected] = useState<string>("Phim đang chiếu")
+    const [apiLink, setApiLink] = useState<string>("api/danh-sach/phim-dang-chieu")
+
+    //MovieRef function
+    const handleScroll = () => {
+        //scroll to MovieRef
+        if (MovieRef.current) {
+            setTimeout(() => {
+                // @ts-ignore
+                MovieRef.current.scrollIntoView({behavior: 'smooth', block: 'start'})
+            }, 100) // Small delay to ensure the video has rendered
+        }
+    }
 
     return (
         <div className="flex flex-col gap-4">
+            <div className={"h-fit"}>
+                <strong className="block  text-lg">
+                    <span className="font-bold text-2xl text-blue-500">Phim mới cập nhật</span>
+                </strong>
+                <CarouselSection/>
+            </div>
+
             <strong className="block text-center text-lg">
                 Lựa chọn hiện tại: <span className="font-bold text-blue-500">{currentSelected}</span>
             </strong>
@@ -212,6 +48,7 @@ export default function Page() {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.typeName)
                             setCurrentPage(1)
+                            handleScroll()
                         }
                     }}
                 >
@@ -232,6 +69,8 @@ export default function Page() {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.danhMucName)
                             setCurrentPage(1)
+                            handleScroll()
+
                         }
                     }}
                 >
@@ -252,6 +91,8 @@ export default function Page() {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.quocGiaName)
                             setCurrentPage(1)
+                            handleScroll()
+
                         }
                     }}
                 >
@@ -272,6 +113,8 @@ export default function Page() {
                             setApiLink(item.apiLink)
                             setCurrentSelected(item.namPhatHanhName)
                             setCurrentPage(1)
+                            handleScroll()
+
                         }
                     }}
                 >
@@ -282,13 +125,14 @@ export default function Page() {
                     ))}
                 </Select>
             </div>
-            <div className={"flex flex-col items-center"}>
+            <div className={"flex flex-col items-center"} ref={MovieRef}>
                 <HeroSection currentPage={currentPage} apiLink={apiLink}/>
                 <Pagination
                     page={currentPage}
                     total={100}
                     onChange={(newPage) => {
                         setCurrentPage(newPage)
+                        handleScroll()
                     }}
                 />
             </div>

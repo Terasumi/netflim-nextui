@@ -1,10 +1,11 @@
 'use client'
 
 import {useRef, useState} from 'react'
-import Image from 'next/image'
 import {MovieResponse} from "@/types";
 import {Tab, Tabs} from "@nextui-org/tabs";
-import { RadioGroup} from "@nextui-org/radio";
+import {RadioGroup} from "@nextui-org/radio";
+import {Image} from "@nextui-org/image";
+import {Chip} from "@nextui-org/chip";
 import {cn} from '@nextui-org/react';
 import SizeRadioItem from "@/components/CustomRadio";
 
@@ -36,9 +37,13 @@ export default function MovieSection({movieData}: MoviePageProps) {
                 <h3 className="text-lg font-semibold mb-2">{value.group.name}</h3>
                 <div className="flex flex-wrap gap-2">
                     {value.list.map((item) => (
-                        <span key={item.id} className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full text-sm">
-              {item.name}
-            </span>
+                        <Chip
+                            key={item.id}
+                            color="primary"
+                            size={"md"}
+                            className="rounded-full"
+                        >{item.name}
+                        </Chip>
                     ))}
                 </div>
             </div>
@@ -50,7 +55,7 @@ export default function MovieSection({movieData}: MoviePageProps) {
             <div className="grid md:grid-cols-3 gap-8">
                 <div className="md:col-span-1">
                     <Image
-                        src={movie.poster_url}
+                        src={`//wsrv.nl/?url=${movie.thumb_url}&w=300&h=450&output=webp`}
                         alt={movie.name}
                         width={300}
                         height={450}
