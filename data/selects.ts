@@ -2,19 +2,19 @@
 export const danhMuc = [
     {
         danhMucName: "Phim mới cập nhật",
-        apiLink: "api/phim-moi-cap-nhat"
+        apiLink: "api/films/phim-moi-cap-nhat"
     },
     {
         danhMucName: "TV shows",
-        apiLink: "api/danh-sach/tv-shows"
+        apiLink: "api/films/danh-sach/tv-shows"
     },
     {
         danhMucName: "Phim bộ",
-        apiLink: "api/danh-sach/phim-bo"
+        apiLink: "api/films/danh-sach/phim-bo"
     },
     {
         danhMucName: "Phim đang chiếu",
-        apiLink: "api/danh-sach/phim-dang-chieu"
+        apiLink: "api/films/danh-sach/phim-dang-chieu"
     },
 ]
 ///api/films/the-loai/${slug}?page=${page}

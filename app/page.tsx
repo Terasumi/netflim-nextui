@@ -12,7 +12,8 @@ export default function Page() {
     const MovieRef = useRef(null)
     const [currentPage, setCurrentPage] = useState(1)
     const [currentSelected, setCurrentSelected] = useState<string>("Phim đang chiếu")
-    const [apiLink, setApiLink] = useState<string>("api/danh-sach/phim-dang-chieu")
+    const [apiLink, setApiLink] = useState<string>("api/films/danh-sach/phim-dang-chieu")
+
 
     //MovieRef function
     const handleScroll = () => {

@@ -18,7 +18,7 @@ export default function HeroSection({currentPage, apiLink}: HeroSectionProps) {
     console.log("Current Api Link: ", apiLink)
     const [items, setItems] = React.useState<Item[]>([])
     React.useEffect(() => {
-        fetch(`/${apiLink}?page=${currentPage}`)
+        fetch(`${process.env.NEXT_PUBLIC_VIDEO_SOURCE}/${apiLink}?page=${currentPage}`)
             .then((res) => res.json())
             .then((data) => {
                 setItems(data.items)
